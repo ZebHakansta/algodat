@@ -1,4 +1,5 @@
 import sys
+from collections import deque
 
 def solve():
     with open('labs/1wordladders/data/sample/1.in', 'r', encoding='utf-8') as file:
@@ -27,7 +28,37 @@ def solve():
                     
                 connections[word].append(itWord)
     print(connections)
-                
+
+#begin BFS
+def BFS(s: str, t: str, connections: dict):
+    visited = [s]
+    queue = deque([s])
+    pred = {}
+
+    while queue:
+
+        current = queue.popleft()
+
+        
+        
+        if current in connections.keys:
+            for word in connections.get(current):
+                if word not in visited:
+                    visited.append(word)
+                    queue.append(word)
+                    pred.update(word, current)
+                    if word == t:
+                        return {
+                            counter = 0
+                            while 
+
+                            ctr
+                        }
+
+
+
+    return "Impossible"
+
 
 
 solve()
