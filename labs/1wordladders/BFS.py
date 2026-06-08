@@ -1,71 +1,69 @@
 import sys
 from collections import deque, Counter
 
-#Counter räknar antal förekomster av bokstav i ord 
-def can_go(word, other): #Får man gå från ett ord till ett annat
-    needed = Counter(word[-4:]) #De 4 sista bokstäverna av A ska finnas i B
-    available = Counter(other) #Dessa bokstäver finns
+def bestFriendSearch(graph, startWord, endWord):
+    if startWord == endWord:
+        return 0
 
-    for letter in needed:
-        if available[letter] < needed[letter]: #Om antalet av en bokstav som finns är mindre
-            return False 
-
-    return True
-
-
-
-def BFS(start: str, end: str, connections: dict):
-    visited = {start}
-    queue = deque([start]) #De vi ska besöka näst (BFS)
-    distance = {start: 0} #Ord från start, räkna kortaste
-
-    while queue:
-        current = queue.popleft() #älsta ordet först (BFS)
-
-        if current == end:
-            return distance[current]
-
-        for word in connections[current]:
-            if word not in visited: #Om granne ej besökts
-                visited.add(word)
-                queue.append(word)
-                distance[word] = distance[current] + 1
-
+    visited = {startWord}
+    que = deque([(startWord, 0)])
+            
+    while que:
+        currentNode, dist = que.popleft()
+        
+        for neighbor in graph[currentNode]:
+            if neighbor not in visited:
+                if neighbor == endWord:
+                    return dist + 1
+                    
+                visited.add(neighbor)
+                que.append((neighbor, dist + 1))
+                
     return "Impossible"
 
-
-
-def solve():
-    #with open('data/secret/2small2.in', 'r', encoding='utf-8') as file:
-        #ines_list = [line.strip() for line in file] #Läser rad för rad (lista av str)
-    lines_list = [line.strip() for line in sys.stdin]
-
-    words = [] #två listor
-    paths = []
-
-    N, Q = lines_list[0].split() #"4 2" -> "4" "2"
-    N = int(N) #antal ord
-    Q = int(Q) #antal frågor (vad ska vi testa)
-
-    for i in range(1, N + 1):
-        words.append(lines_list[i]) #hämtar raden på i
-
-    for i in range(N + 1, N + Q + 1): #se hur data är utformad
-        paths.append(lines_list[i])
-
-    connections = {} #k = ord, V = lista på alla ord man får gå till från det ordet
-
-    for word in words: #flr varje ird skapas nyckel i connections med tom lista
-        connections[word] = []
+def main():
+    lines = sys.stdin.read().splitlines()
+    if not lines:
+        return
+        
+    nWords, nTasks = lines[0].split()
+    nWords = int(nWords)
+    nTasks = int(nTasks)
+    
+    words = lines[1:nWords+1]
+    
+    available_counts = {w: Counter(w) for w in words}
+    needed_counts = {w: Counter(w[-4:]) for w in words}
+    
+    graph = {w: [] for w in words}
 
     for word in words:
-        for other_word in words:
-            if other_word != word and can_go(word, other_word):
-                connections[word].append(other_word)
+        needed = needed_counts[word]
+        
+        for otherWord in words:
+            if word != otherWord:
+                available = available_counts[otherWord]
+                
+                can_transition = True
+                for letter, count in needed.items():
+                    if available[letter] < count:
+                        can_transition = False
+                        break
+                
+                if can_transition:
+                    graph[word].append(otherWord)
 
-    for path in paths:
-        start, end = path.split()
-        print(BFS(start, end, connections))
+    for i in range(nWords+1, nWords+nTasks+1):
+        start, target = lines[i].split()
+        print(bestFriendSearch(graph, start, target))
 
+if __name__ == '__main__':
+    main()
 
-solve()
+    """
+    1. The graph is a dict of words and words it has edges too. We iterate through every combination of words and check if they satisfy the conditions in the problemformulation.
+    2. Making key value pairs with avery visited node and their predecessor while we perform the BFS
+    3. Time complexity: while loop => maximum of n iterations, for loop maximum of 2m total iterations => O(n + m)
+    4. No because DFS is not guaranteed to find the shortest path.
+    5. Finding the optimal way to drive between two points, gps navigation, 
+    """ 
