@@ -15,9 +15,9 @@
   \section{Results}
 
   \todo[inline]{Briefly comment the results, did the script say all your solutions were correct? Approximately how long time does it take for the program to run on the largest input? What takes the majority of the time?}
-
+    Everything is in order, running the largest file took Approximately 7 seconds, the complexity of making the graph is $O(n^2)$ compared to $O(n+m)$ for the BFS
   \section{Implementation details}
 
   \todo[inline]{How did you implement the solution? Which data structures were used? Which modifications to these data structures were used? What is the overall running time? Why?}
-
+    I made a main functon that creates the graph and calls a BFS function that internally handles keeping track of how many edges are transversed; deque for the pending nodes and keeping track of number of transversed nodes, dict for the graph, set for visited nodes; push pop on the que, under 0.1 seconds for all except the large inputs both taking about 10 seconds. Quadratic time complexity of the graph making process mainly.
 \end{document}
