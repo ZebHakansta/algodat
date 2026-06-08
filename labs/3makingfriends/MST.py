@@ -3,8 +3,8 @@ import sys
 
 def find(parent, node):
     root = node
-    while parent[root] != root:
-        root = parent[root]
+    while parent[root] != root: 
+        root = parent[root]# Klättra uppåt tills vi når en nod som pekar på sig själv      # = det är roten
     while parent[node] != root:
         parent[node], node = root, parent[node]
     return root
@@ -38,5 +38,9 @@ def main():
 
     print(total_cost)
 
-
 main()
+
+#1. VI kör kruskals algoritm (sorterar och hittar alla noder som inte redan är sammankopplade). Använder vår find-funktion för att hitta roten
+#2. O(M log M), det är sorteringen som tar mest tid, de andra delarna är linjära 
+#3. Nätet blir inte helt ihopkopplat llängre, du måste hitta den nya billigaste kopplingen mellan noderna. Finns bara EN väg mellan varje i MST, i verkligheten vill man ha alternativ
+#4. Ex. elnät. Du vill koppla samman ALLA stolpar, du vill minimera kostnad
