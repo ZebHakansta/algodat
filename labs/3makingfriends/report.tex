@@ -15,9 +15,15 @@
   \section{Results}
 
   \todo[inline]{Briefly comment the results, did the script say all your solutions were correct? Approximately how long time does it take for the program to run on the largest input? What takes the majority of the time?}
+  All solutions (samples) were correct according to the check-solution. The largest input takes approx. 6s to run on. The majority of the time is the sorting (O(M log M)). All other parts of program is linear (O(M))
 
   \section{Implementation details}
 
   \todo[inline]{How did you implement the solution? Which data structures were used? Which modifications to these data structures were used? What is the overall running time? Why?}
-
+  The problem was to connect all people with minimum cost in total. We used Kruskals algorithm to solve the problem: Sorting all corners by weight, then iterate from the lowest to highest cost.
+  Then we check if the two points are already connected, if they are not - Add. If they are - Move on, we already have a better connection. 
+  Two structures were used: 1. Lsit of edges stored as (wheight, u ,v)-touples. 2. A Union-Find with a parent array where each node initially points to itself
+  Path compression: All nodes point directly to the root instead of "direct parent", meaning it's easy to see if a node belongs to the same group. 
+  We have 3 different parts in this solution: Read M amount edges, Sort M amount edges, Go through M amount edges with union find. O(M)+O(M logM) + O(M) -> O(M log M) is the biggest
+ 
 \end{document}
