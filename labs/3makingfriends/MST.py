@@ -1,73 +1,51 @@
-"""minheaop 
-adjencey list
-träd algoritm"""
-
-# Open the file in read mode ('r')
-import heapq
-import random
+import sys
 
 
-def Janik(graph, first):
-    MST = []
-    visited = set()
-    totWeight = 0
-    heap = [(0, None, first)]
-    
-    while heap:
-        weight, source, dest = heapq.heappop(heap)
+def find(parent, nod):
+    # Folj kedjan av foraldrar tills vi hittar roten (nodens komponent-representant).
+    rot = nod
+    while parent[rot] != rot:
+        rot = parent[rot]
+    # Path compression: peka om alla noder pa vagen direkt mot roten,
+    # sa att nasta find blir snabbare.
+    while parent[nod] != rot:
+        parent[nod], nod = rot, parent[nod]
+    return rot
 
-        if dest in visited:
-            continue
-            
-        visited.add(dest)
-
-        if not source is None:
-            MST.append((source, dest, weight))
-            totWeight += weight 
-        
-        for weight, newDest in graph[dest]:
-            if newDest not in visited:
-                heapq.heappush(heap, (weight, dest, newDest))
-    return totWeight
-
-    
-    
 
 def main():
-    first = True
-    attending = 0
-    nPairs = 0
-    graph = {}
-    with open('labs/3makingfriends/data/secret/3large.in', 'r', encoding='utf-8') as file:
-        for line in file:
-            # .strip() removes trailing newlines (\n) and extra whitespace
-            print(line.strip())
-            if first:
-                attending, nPairs = line.split()
-                first = False
-            else:
-                source, destination, weight = line.split()
-                weight = int(weight)
-                if source in graph:
-                    graph[source].append((weight, destination))
-                else:
-                    graph.update({source : [(weight, destination)]})
-                if destination in graph:
-                    graph[destination].append((weight, source))
-                else:
-                    graph.update({destination : [(weight, source)]})
+    # Las hela indata pa en gang och dela upp i en lista av heltal.
+    data = sys.stdin.buffer.read().split()
+    pos = 0
+
+    antal_personer = int(data[pos]); pos += 1
+    antal_kanter = int(data[pos]); pos += 1
+
+    # Spara kanterna som (vikt, u, v) sa att sortering sker pa vikten.
+    kanter = []
+    for _ in range(antal_kanter):
+        u = int(data[pos]); pos += 1
+        v = int(data[pos]); pos += 1
+        vikt = int(data[pos]); pos += 1
+        kanter.append((vikt, u, v))
+
+    # Steg 1: sortera kanterna fran lattast till tyngst.
+    kanter.sort()
+
+    # Varje nod borjar som sin egen komponent. Noderna ar 1..N.
+    parent = list(range(antal_personer + 1))
+
+    total_kostnad = 0
+
+    # Steg 2: ta varje kant om den kopplar samman tva skilda komponenter.
+    for vikt, u, v in kanter:
+        rot_u = find(parent, u)
+        rot_v = find(parent, v)
+        if rot_u != rot_v:
+            parent[rot_u] = rot_v   # Sla ihop komponenterna.
+            total_kostnad += vikt
+
+    print(total_kostnad)
 
 
-
-    first = random.choice(list(graph.keys()))
-    print(graph)
-    print(Janik(graph, first))
-
-
-if __name__ == "__main__":
-    main()
-
-
-
-
-        
+main()
