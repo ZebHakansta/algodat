@@ -34,10 +34,9 @@ def main ():
 GAP = -4
 #DP
 def align(s1, s2, cost, char_to_index):
-    n = len(s1)
+    n = len(s1) #length
     m = len(s2)
 
-    #n och m är längder på de två strängarna
     #F[i][j] = bästa poäng för s1[i] mot s2[i]
     F = [[0] * (m+1) for _ in range (n + 1)] #0 är den tomma prefixen
 
